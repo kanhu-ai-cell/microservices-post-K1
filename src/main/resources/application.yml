@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: POST-SERVICE
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/micro-postDb
+    username: postgres
+    password: test
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+
+
+server:
+  port: 8088
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+#Actuator  //spring Aop   //circuitbreaker
+#for health check of service by Actuator
+#what is threshold
+#What is circuit breakers life cycle
+#What is circuit breakers
+#circuitbreaker find the fault
+#lifecycle of circuitbreaker
+#how to monitor health of microservices
+#what is fault tolarnace,mechanism
+#
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+   web:
+    exposure:
+      include: health,info,metrics,prometheus
+
+  endpoint:
+   health:
+     show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      commentService:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 6s
+        permittedNumberOfCallsInHalfOpenState: 3
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        slidingWindowType: COUNT_BASED
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 2s
+
